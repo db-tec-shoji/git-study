@@ -1,2 +1,2 @@
 # git-study
-Studying git system. For my company.
+Git勉強会用のリポジトリです。
