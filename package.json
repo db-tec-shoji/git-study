@@ -1,0 +1,25 @@
+{
+  "name": "git-study",
+  "version": "1.0.0",
+  "description": "手始めにGitをインストールしましょう。",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/db-tec-shoji/git-study.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/db-tec-shoji/git-study/issues"
+  },
+  "homepage": "https://github.com/db-tec-shoji/git-study#readme",
+  "devDependencies": {
+    "browser-sync": "^2.18.13",
+    "gulp": "^3.9.1",
+    "gulp-plumber": "^1.1.0",
+    "gulp-sass": "^3.1.0"
+  }
+}

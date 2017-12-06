@@ -17,7 +17,7 @@ Windowsの場合は（10以降ならキメラみたいなUbuntuが入ってま�
 
 先程インストールしたGitにGitBashというものが付属しているので、そちらを立ち上げてください。
 
-```
+```bash
 $ cd ~/
 $ pwd # /c/Users/your_username と表示されるはずです
 $ mkdir test_project
@@ -30,7 +30,7 @@ $ git init
 
 作成したファイルをステージに載せるには下記を実行します。
 
-```
+```bash
 $ git add testfile
 $ git commit
 ```
@@ -42,7 +42,7 @@ $ git commit
 
 今回は今見ていただいているリポジトリを持ってきましょう。
 
-```
+```bash
 $ cd ~/
 $ git clone https://github.com/db-tec-shoji/git-study.git
 ```
@@ -77,7 +77,7 @@ master
 ## 5. 基本的なフロー - 実戦
 今回のプロジェクトではすでに`develop`ブランチが存在するので、持ってきましょう。
 
-```
+```bash
 $ cd ~/git-study
 $ git checkout -b develop origin/develop
 ```
@@ -90,3 +90,69 @@ $ git checkout -b develop origin/develop
 1. そのブランチは`origin/develop`というリモートのブランチを元にする
 
 という操作を行っています。
+
+では、実際にファイルを触って、変更履歴をgitに追加していきます。
+
+### と、その前に。
+今回のプロジェクトでは、gulpを使用しているので、そのための前準備をします。
+
+```bash
+$ which node
+$ which gulp
+```
+
+上記コマンドで何も応答が返ってこなければ、インストールの必要があります。
+
+[Node.js](https://nodejs.org/ja/)
+
+上記リンクから、安定版のバイナリをダウンロードし、インストールしてください。
+
+Nodejsがインストールされたら、次はgulpをインストールします。
+
+```bash
+$ npm install -g gulp
+```
+
+上記コマンドでgulpがグローバル領域にインストールされます。
+
+ここまでできたら、プロジェクトに必要な依存パッケージをインストールします。
+
+```bash
+$ cd ~/git-study
+$ npm install
+```
+
+ちょっと時間がかかりますが、node関連のモジュールがインストールされていきます。
+
+インストールが終われば、下記のコマンドを実行しましょう。
+
+```bash
+$ gulp serve
+```
+
+ブラウザが開けばOKです。
+
+### ファイルの変更とGitへの変更履歴追加
+それでは実際にHTMLとCSSを変更して、Gitコマンドで変更履歴を追加していきましょう。
+
+まず、ブランチを作成します。
+
+```bash
+$ git checkout -b feature/task_name
+```
+
+その後、エディタでファイルを開き変更を加えたあと、Gitに登録していきます。
+
+```bash
+$ git add your_changed_file
+$ git commit
+```
+
+エディタが開くので、コミットメッセージを編集します。
+
+終わったら、`develop`にマージしましょう。
+
+```bash
+$ git checkout develop
+$ git merge --no-ff feature/task_name
+```
