@@ -236,3 +236,27 @@ Merge made by the 'recursive' strategy.
 
 ### git rebase - ブランチ生成元をずらす
 `develop`ブランチが自分の開発ブランチより進んでしまったら？
+
+とはいえ、まだ手元の`feature/hogehoge`は開発が終わっていません。かつ、`develop`の変更がないと、開発をすすめようにも進められない。
+
+そんなときに嬉しいのが、`rebase`です。
+
+今いるブランチの生成元のコミットを付け替えてくれます。
+
+[【git】分かりやすく！mergeは「合流」、rebaseは「付け替え」!](http://nullnote.com/web/git/merge_rebase/)
+
+コマンドで見ていきましょう。
+
+```bash
+$ git rebase develop
+```
+
+コンフリクトが発生した場合は、
+
+```bash
+=== コンフリクトを解消させる ===
+$ git add target_file
+$ git rebase --continue
+```
+
+ここで間違って`commit`してしまうと`rebase`が失敗するので、注意が必要です。
