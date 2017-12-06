@@ -156,3 +156,83 @@ $ git commit
 $ git checkout develop
 $ git merge --no-ff feature/task_name
 ```
+
+そのあと、リモートリポジトリに反映すればOKです。
+
+```bash
+$ git push
+```
+
+## 6. リモートの変更内容を持ってくる
+複数名で開発をしていると、リモートのブランチに変更が走っていることはしばしばです。
+
+また、`push`する際も、自分の手元よりもリモートが進んでいる場合は、まずリモートの変更内容を持ってこなくてはいけません。
+
+先程`push`した際に、こんなメッセージが出なかったでしょうか？
+
+```bash
+$ git push
+To https://github.com/db-tec-shoji/git-study.git
+ ! [rejected]        develop -> develop (fetch first)
+error: failed to push some refs to 'https://github.com/db-tec-shoji/git-study.git'
+hint: Updates were rejected because the remote contains work that you do
+hint: not have locally. This is usually caused by another repository pushing
+hint: to the same ref. You may want to first integrate the remote changes
+hint: (e.g., 'git pull ...') before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+```
+
+これは要するに「リモートリポジトリがあなたの手元の歴史より進んでるから、`push`する前に変更内容をローカルに持ってきてね」ということです。
+
+ヒントには、`git pull`が推奨されていますが、様々な宗教的な理由（嘘）によって、このコマンドは使用してはいけません。※簡単に言うと、マージの履歴が場合によっては残らなくなるから。
+
+そこで、リモートの変更履歴を取って来たい場合は、下記の通りの操作をすることになります。
+
+```bash
+$ git checkout develop
+$ git fetch
+remote: Counting objects: 4, done.
+remote: Compressing objects: 100% (2/2), done.
+remote: Total 4 (delta 1), reused 4 (delta 1), pack-reused 0
+Unpacking objects: 100% (4/4), done.
+From https://github.com/db-tec-shoji/git-study
+   e82594b..a919f3f  develop    -> origin/develop
+```
+
+`fetch`は、リモートの変更「情報」のみを取ってきてくれるコマンドです。
+
+さきほどのメッセージからも推測できる通り、リモートの`develop`に変更が走っているみたいですね。なので、リモートの`develop`をマージしちゃいましょう。
+
+```bash
+$ git merge --no-ff origin/develop
+Merge made by the 'recursive' strategy.
+ testfile | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 testfile
+```
+
+これで、リモートの`develop`への変更内容がローカルに反映されました。
+
+「`merge`ってブランチを管理するものじゃなかったの？」
+
+はい。ブランチを管理するものです。この場合も「リモートのブランチ」をマージしたという扱い。
+
+慣れるまではややこしいですが、最初は呪文のように覚えてしまいましょう。
+
+ちなみに`--no-ff`オプションはファストフォワードしないよ、ということです。
+
+ファストフォワードとノンファストフォワードの違いは大きくは「マージの際にコミットポイントを作成するかどうか」です。
+
+詳しくはこちらなどをご参照ください。
+
+[図で分かるgit-mergeの--ff, --no-ff, --squashの違い](http://d.hatena.ne.jp/sinsoku/20111025/1319497900)
+
+## 7. Gitの愉快なコマンドたち
+ここまでで、基本的なGitの使い方は一通り抑えられました。
+
+しかし、Gitの魅力はこれだけでは語り尽くせません。
+
+大量にあるコマンドの中から、特に覚えておきたい素敵なものをお伝えします。
+
+### git rebase - ブランチ生成元をずらす
+`develop`ブランチが自分の開発ブランチより進んでしまったら？
