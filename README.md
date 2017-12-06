@@ -2,7 +2,7 @@
 ## 1. Gitのインストール
 手始めにGitをインストールしましょう。
 
-MacやLinuxの場合は（バージョンはちょっと古いですが）デフォルトで入っているので、バージョンを気にしないのであれば、何も気にせず始められます。
+MacやLinuxの場合は（バージョンはちょっと古いですが）デフォルトで入っているので、バージョンを気にしないのであれば、何も準備せずに始められます。
 
 Windowsの場合は（10以降ならキメラみたいなUbuntuが入ってますが）、バイナリをダウンロードしてインストールする必要があります。めんどくさいですね。
 
@@ -352,4 +352,229 @@ $ git rebase --continue
 ここで間違って`commit`してしまうと`rebase`が失敗するので、注意が必要です。
 
 ### git cherry-pick - 特定の変更のみ持ってくる
-`rebase`や`merge`のように、ブランチの変更内容全部持ってくる必要はないけど、ある特定のコミットは
+`rebase`や`merge`のように、ブランチの変更内容全部持ってくる必要はないけど、ある特定のコミットのみほしいなんてときは、`cherry-pick`で解消しましょう。
+
+まずは、ログを確認して持って来たいコミットのハッシュ値を確認しましょう。ハッシュ値はGitオブジェクトのIDのようなものです。
+
+```bash
+$ git log
+ ・
+ ・
+ ・
+commit b2414f3ae9a26aca9b138f39a16a1a8b2c95f612 #<-これがハッシュ値
+Author: db-tec-shoji <shoji@db-tec.com>
+Date:   Wed Dec 6 13:30:58 2017 +0900
+
+    git logコマンドの説明追加
+
+    Gitの履歴確認のためのコマンド説明を追記しました。
+ ・
+ ・
+ ・
+```
+
+その後、先程コピーしたハッシュ値を元に`cherry-pick`します。
+
+```bash
+$ git cherry-pick b2414f3ae9a26aca9b138f39a16a1a8b2c95f612
+```
+
+### git reset - 間違った操作を取り消したい
+誤ってコミットしてしまったり、マージしてしまった際は`reset`してしまいましょう。
+
+`reset`にはおおむね2種類あるので、使い方とともに見ていきます。
+
+```bash
+$ touch dummyfile
+$ echo "hogehoge" >> dummyfile
+$ git add dummyfile
+$ git commit -m "add dummyfile"
+```
+
+上記のように要らないファイルをコミットしてしまったとします。
+
+まず、ファイル自体はそのままにしたいけど、コミット自体は取り消したいとき。作業が中途半端なのにコミットしてしまった場合などはこちらですね。
+
+```bash
+$ git reset --soft HEAD^
+=== もしくは ===
+$ git reset --soft b2414f3ae9a26aca9b138f39a16a1a8b2c95f612
+$ git status
+On branch feature/test
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+        new file:   dummyfile
+$ git reset
+$ git status
+On branch feature/test
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+        dummyfile
+
+nothing added to commit but untracked files present (use "git add" to track)
+```
+
+`HEAD^`で、今の一つ前のコミットを表せます。また、ハッシュ値をしていして、そこまでのコミットを全部戻すことも可能です。ただ、「特定のコミットのみを戻す」操作ではないので、そこまでのコミットが一旦すべてなかったことになるので、注意してください。
+
+`--soft`の場合は、ファイルがステージされた状態に戻るので、その状態も必要なければ、さらに`git reset`するとステージ状態も解除されます。
+
+```bash
+$ git reset --hard HEAD^
+=== もしくは ===
+$ git reset --hard b2414f3ae9a26aca9b138f39a16a1a8b2c95f612
+$ git status
+On branch feature/test
+nothing to commit, working tree clean
+$ ls
+assets/  gulpfile.js  package.json  README.md  testfile
+```
+
+一方、`--hard`の場合は、そもそも全てなかったことになるので、使用する際はお気をつけください。
+
+本来不必要だったのに混ざってしまったゴミファイルなんかを排除するときに使ったりします。
+
+### git clean - ステージされていないファイルのお掃除
+いらないファイルなのに混ざっていてリポジトリが汚いとき、お掃除したくなりますよね？
+
+そういうときは`git clean`でかいけつしましょう。
+
+例えば、
+
+```bash
+$ touch hoge #不要なファイルの作成
+$ touch fuga #不要なファイルの作成
+$ mkdir moga #不要なディレクトリの作成
+```
+
+このようにゴミファイルを作成し、
+
+```bash
+$ git status
+On branch feature/test                                                       
+Untracked files:                                                             
+  (use "git add <file>..." to include in what will be committed)             
+
+        fuga                                                                 
+        hoge                                                                 
+
+nothing added to commit but untracked files present (use "git add" to track)
+```
+
+ステータスを確認すると、ステージされていないファイルの存在が確認できます。ただし、Gitは「空のディレクトリ」を管理対象としない（設定の変更で管理するようにもできるようです）ので、「moga」ディレクトリはここでは確認できません。
+
+そこで、まずドライランモードで`git clean`を実行します。
+
+```bash
+$ git clean -n
+Would remove fuga
+Would remove hoge
+$ git clean -nd
+Would remove fuga
+Would remove hoge
+Would remove moga/
+```
+
+こうすることで、お掃除対象のファイルがわかりますね。
+
+ドライランモードのオプションが`-n`、ディレクトリも対象にするオプションが`-d`です。
+
+何の気なしに`git clean`してしまうと、「本当は必要だったのに！！！」というファイルなんかも消されてしまうので、必ずドライランモードで確認してから実行するほうが身のためです。
+
+ステージされていないファイルは、Git管理下にすらないため、もとに戻すことはできません。永遠に闇の中です・・・。
+
+ドライランモードで列挙されたファイルが自分の意図通りであれば、実際に実行します。
+
+```bash
+$ git clean -fd
+Removing fuga
+Removing hoge
+Removing moga/
+```
+
+### git rm --cached と .gitignoreの話
+実ファイルとして手元には必要だけど、Gitの管理対象にはしたくない。そんなファイルありますよね？
+
+例えば、設定ファイル。例えば、環境に依存するパッケージ類。例えば、コンパイル後の成果物。
+
+今回のプロジェクトの中では、`node_modules/`と`dest/`がそれに当たります。
+
+こちらのファイル群はすでに`.gitignore`に記載されているので、Gitで管理されていません。
+
+```bash
+$ cat .gitignore
+node_modules/
+dest/
+```
+
+では、すでにコミットしちゃっていて、あとからGit管理対象外にしたい場合、どうしたら良いでしょう？
+
+`git rm`でファイルもGit上からも消せますが、手元にはおいておきたい場合、
+
+```bash
+$ touch hoge #不要なファイルの作成
+$ git add hoge
+$ git commit -m "add hoge"
+$ echo "hogehoge" >> hoge
+$ git status
+On branch feature/test
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+        modified:  hoge
+
+no changes added to commit (use "git add" and/or "git commit -a")
+$ git add hoge
+$ git commit -m "modify hoge"
+$ git rm --cached hoge
+rm 'hoge'
+$ git status
+On branch feature/test
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+        deleted:    hoge
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+        hoge
+$ git commit -m "remove hoge"
+$ ls
+assets/  hoge  gulpfile.js  package.json  README.md  testfile
+$ echo "hoge" >> .gitignore #hogeをGit管理対象外にする
+```
+
+このようにすることによって、実ファイルは保持したまま、Gitの管理対象外にすることができます。
+
+### git stash - 編集が中途半端なときに別ブランチに移る必要が出てきた
+こっちの作業しているのに別ブランチで修正しなきゃいけないけど、コミットはしたくない・・・。そんなときありますよね？
+
+そういうときは`stash`で編集内容を一時的に保持しちゃいましょう。
+
+```bash
+$ git stash
+$ git status
+On branch feature/test
+nothing to commit, working tree clean
+$ git stash list
+stash@{0}: WIP on feature/test: b2a7efc delete hoge
+```
+
+取り出すときは、
+
+```bash
+$ git stash apply
+```
+
+でOKです。
+
+ただし、直近のものから取り出され、また取り出しても`stash`内に残り続けるため、定期的にお掃除して、`stash`内に残っているものが把握できないことがないようにしましょう。
+
+```bash
+$ git stash drop
+```
+
+このコマンドで`stash`内からオブジェクトを消すことができます。
