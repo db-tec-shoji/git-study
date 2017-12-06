@@ -131,3 +131,28 @@ $ gulp serve
 ```
 
 ブラウザが開けばOKです。
+
+### ファイルの変更とGitへの変更履歴追加
+それでは実際にHTMLとCSSを変更して、Gitコマンドで変更履歴を追加していきましょう。
+
+まず、ブランチを作成します。
+
+```bash
+$ git checkout -b feature/task_name
+```
+
+その後、エディタでファイルを開き変更を加えたあと、Gitに登録していきます。
+
+```bash
+$ git add your_changed_file
+$ git commit
+```
+
+エディタが開くので、コミットメッセージを編集します。
+
+終わったら、`develop`にマージしましょう。
+
+```bash
+$ git checkout develop
+$ git merge --no-ff feature/task_name
+```
