@@ -63,14 +63,14 @@ Gitリポジトリ上で開発を行う際の基本的なフローを紹介し�
 ```
 master
   ├ develop
-  │   └ feature/task_name
+  │└ feature/task_name
   └ hotfix/task_name
 ```
 
 - master # 大元のブランチ。公開済みのもののみここにのっかる
-    - develop # 開発中のブランチ。ステージング環境に公開されていると幸せになれる。すべての機能開発はここをもとにブランチを切る（`feature/hogehoge`）
-      - feature/task_name # 機能開発用のブランチ。一機能ごとにこのブランチを切って、そのブランチ上で作業を行う。開発が終われば`develop`にマージする。※もしくは、リモートに`push`してレビューしてもらう。
-    - hotfix/task_name # 緊急で対応が必要なバグ等の改修作業を行う。このブランチのみ直接`master`から切ってOK。対応が終われば、`master`及び`develop`にマージする。
+ - develop # 開発中のブランチ。ステージング環境に公開されていると幸せになれる。すべての機能開発はここをもとにブランチを切る（`feature/hogehoge`）
+- feature/task_name # 機能開発用のブランチ。一機能ごとにこのブランチを切って、そのブランチ上で作業を行う。開発が終われば`develop`にマージする。※もしくは、リモートに`push`してレビューしてもらう。
+ - hotfix/task_name # 緊急で対応が必要なバグ等の改修作業を行う。このブランチのみ直接`master`から切ってOK。対応が終われば、`master`及び`develop`にマージする。
 
 次の項からは実際にコマンドを触りながら見ていきます。
 
@@ -173,7 +173,7 @@ $ git push
 ```bash
 $ git push
 To https://github.com/db-tec-shoji/git-study.git
- ! [rejected]        develop -> develop (fetch first)
+ ! [rejected]  develop -> develop (fetch first)
 error: failed to push some refs to 'https://github.com/db-tec-shoji/git-study.git'
 hint: Updates were rejected because the remote contains work that you do
 hint: not have locally. This is usually caused by another repository pushing
@@ -196,7 +196,7 @@ remote: Compressing objects: 100% (2/2), done.
 remote: Total 4 (delta 1), reused 4 (delta 1), pack-reused 0
 Unpacking objects: 100% (4/4), done.
 From https://github.com/db-tec-shoji/git-study
-   e82594b..a919f3f  develop    -> origin/develop
+e82594b..a919f3f  develop -> origin/develop
 ```
 
 `fetch`は、リモートの変更「情報」のみを取ってきてくれるコマンドです。
@@ -234,6 +234,96 @@ Merge made by the 'recursive' strategy.
 
 大量にあるコマンドの中から、特に覚えておきたい素敵なものをお伝えします。
 
+### git log - 変更履歴を確認する
+これまでどんなコミットがされてきたのか、ログを確認したい場合に実行します。
+
+```bash
+$ git log
+commit ed0af582cb6987b9d827090e89d1fff180ea22d0 (HEAD -> develop, origin/develop)
+Merge: 70387b1 7294d2a
+Author: Yu shoji <p-shoji@sbs.shimadzu.co.jp>
+Date:Wed Dec 6 13:12:05 2017 +0900
+
+ Merge branch 'feature/edit-testfile' into develop
+
+commit 7294d2ac2e4b1a709c290df106c48c9005f68944 (feature/edit-testfile)
+Author: Yu shoji <p-shoji@sbs.shimadzu.co.jp>
+Date:Wed Dec 6 13:08:30 2017 +0900
+
+ テストファイルの修正
+
+ rebaseコマンドのチェックのために修正を追加しました。
+
+commit 70387b10b9abaa6aadf10814bd840fd00bc567d2
+ ・
+ ・
+ ・
+```
+
+ログがずらずらと出ます。
+
+#### 便利なオプションたち
+ただ、`git log`だけだと「何のファイルに変更があったのか」「どんな変更があったのか」がわかりません。
+
+そこで、オプションを使って、そこら辺も確認できるようにしましょう。
+
+```bash
+$ git log --stat #変更のあったファイル名が出る
+commit 7294d2ac2e4b1a709c290df106c48c9005f68944 (feature/edit-testfile)
+Author: Yu shoji <p-shoji@sbs.shimadzu.co.jp>
+Date:Wed Dec 6 13:08:30 2017 +0900
+
+ テストファイルの修正
+
+ rebaseコマンドのチェックのために修正を追加しました。
+
+ testfile | 3 +++
+ 1 file changed, 3 insertions(+)
+ ・
+ ・
+ ・
+commit 13dd56390f33aad9391e3dbaabee6f3c2f2435d8
+Author: db-tec-shoji <shoji@db-tec.com>
+Date:Wed Dec 6 13:06:05 2017 +0900
+
+ リモートブランチのマージ方法を追加
+
+ リモートの変更履歴をローカルに反映するための手順を追加しました。
+
+ README.md | 80 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 80 insertions(+)
+ ・
+ ・
+ ・
+```
+
+```bash
+$ git log -p #差分が確認できる
+commit 13dd56390f33aad9391e3dbaabee6f3c2f2435d8
+Author: db-tec-shoji <shoji@db-tec.com>
+Date:Wed Dec 6 13:06:05 2017 +0900  
+
+ リモートブランチのマージ方法を追加
+
+ リモートの変更履歴をローカルに反映するための手順を追加しました。
+
+diff --git a/README.md b/README.md  
+index 1ce356d..2a25c59 100644
+--- a/README.md
++++ b/README.md
+@@ -156,3 +156,83 @@ $ git commit
+ $ git checkout develop
+ $ git merge --no-ff feature/task_name
++  
++そのあと、リモートリポジトリに反映すればOKです。
++  
++$ git push
++また、`push`する際も、自分の手元よりもリモートが進んでいる場合は、まずリモートの変更内容を持ってこなくてはいけません。
+ ・
+ ・
+ ・
+```
+
 ### git rebase - ブランチ生成元をずらす
 `develop`ブランチが自分の開発ブランチより進んでしまったら？
 
@@ -260,3 +350,6 @@ $ git rebase --continue
 ```
 
 ここで間違って`commit`してしまうと`rebase`が失敗するので、注意が必要です。
+
+### git cherry-pick - 特定の変更のみ持ってくる
+`rebase`や`merge`のように、ブランチの変更内容全部持ってくる必要はないけど、ある特定のコミットは
