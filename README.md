@@ -87,6 +87,6 @@ $ git checkout -b develop origin/develop
 ローカルのリポジトリには、まだ`develop`ブランチは存在しないため、上記コマンドで、
 
 1. ローカルに`develop`ブランチを作成
-1. そのぶらんちは`origin/develop`というリモートのブランチを元にする
+1. そのブランチは`origin/develop`というリモートのブランチを元にする
 
 という操作を行っています。
