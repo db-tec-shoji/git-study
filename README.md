@@ -578,3 +578,36 @@ $ git stash drop
 ```
 
 このコマンドで`stash`内からオブジェクトを消すことができます。
+
+## おまけ. コマンド打つのつらいお（・ω・）
+コマンドを打ちながらGitを触ったほうが理解が進むので、基本CUIベースでの説明を進めてきましたが、コマンド覚えるのも見るのも嫌って方のために、GUIツールもあるので、最後にご紹介します。
+
+### GitKraken
+おすすめです。最近出たらしいElectron製のGitツール。Mac、Windows、Linuxとマルチプラットフォームに対応。
+
+[GitKraken](https://www.gitkraken.com/)
+
+### Sourcetree
+使用者がわりと多めな印象。GitKrakenに比べるとすこし動作がもっさりしている。
+
+[Sourcetree](https://ja.atlassian.com/software/sourcetree)
+
+### ungit
+ブラウザベースのNodejs製ツール。`npm`でインストールできるし、ブランチの状態とかは把握しやすい用に思います。
+
+インストールは、
+
+```bash
+$ npm install -g ungit
+```
+
+だけなのでお手軽。
+
+[ungit](https://github.com/FredrikNoren/ungit)
+
+### 他には
+他にもたくさんあるらしいです。git公式でも一覧が確認できます。
+
+[Git GUI tools](https://git-scm.com/download/gui/linux)
+
+亀？　亀のことは忘れましょう。
