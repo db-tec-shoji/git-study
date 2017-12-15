@@ -79,17 +79,10 @@ master
 
 ```bash
 $ cd ~/git-study
-$ git checkout -b develop origin/develop
+$ git checkout develop
 ```
 
-`git checkout`は、ブランチを切り替えるコマンドになります。`-b`オプションは、ブランチの切り替えと同時に、ブランチを作成することができます。
-
-ローカルのリポジトリには、まだ`develop`ブランチは存在しないため、上記コマンドで、
-
-1. ローカルに`develop`ブランチを作成
-1. そのブランチは`origin/develop`というリモートのブランチを元にする
-
-という操作を行っています。
+`git checkout`は、ブランチを切り替えるコマンドになります。今回の場合、すでに`develop`ブランチが存在するので、チェックアウトが成功すると思います。
 
 では、実際にファイルを触って、変更履歴をgitに追加していきます。
 
@@ -141,9 +134,11 @@ $ gulp serve
 $ git checkout -b feature/task_name
 ```
 
-その後、エディタでファイルを開き変更を加えたあと、Gitに登録していきます。
+その後、エディタでファイルを開き変更を加えたあと、差分を確認し、Gitに登録していきます。
 
 ```bash
+$ git status #リポジトリの状態を確認
+$ git diff #HEADとの差分を確認。自分の意図する変更が行われているか確認してください。
 $ git add your_changed_file
 $ git commit
 ```
