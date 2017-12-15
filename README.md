@@ -79,17 +79,10 @@ master
 
 ```bash
 $ cd ~/git-study
-$ git checkout -b develop origin/develop
+$ git checkout develop
 ```
 
-`git checkout`は、ブランチを切り替えるコマンドになります。`-b`オプションは、ブランチの切り替えと同時に、ブランチを作成することができます。
-
-ローカルのリポジトリには、まだ`develop`ブランチは存在しないため、上記コマンドで、
-
-1. ローカルに`develop`ブランチを作成
-1. そのブランチは`origin/develop`というリモートのブランチを元にする
-
-という操作を行っています。
+`git checkout`は、ブランチを切り替えるコマンドになります。今回の場合、すでに`develop`ブランチが存在するので、チェックアウトが成功すると思います。
 
 では、実際にファイルを触って、変更履歴をgitに追加していきます。
 
