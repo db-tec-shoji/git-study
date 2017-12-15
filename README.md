@@ -134,9 +134,11 @@ $ gulp serve
 $ git checkout -b feature/task_name
 ```
 
-その後、エディタでファイルを開き変更を加えたあと、Gitに登録していきます。
+その後、エディタでファイルを開き変更を加えたあと、差分を確認し、Gitに登録していきます。
 
 ```bash
+$ git status #リポジトリの状態を確認
+$ git diff #HEADとの差分を確認。自分の意図する変更が行われているか確認してください。
 $ git add your_changed_file
 $ git commit
 ```
